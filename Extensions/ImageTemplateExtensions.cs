@@ -20,11 +20,12 @@ namespace ImaGen.Extensions
         /// <typeparam name="TPixel">Type of Pixel of Image</typeparam>
         /// <param name="imageFromTemplate">The image generated from template</param>
         /// <param name="backgroundColor">The Background Color under TPixel format</param>
+        /// <param name="backgroundImage">The Background Image</param>
         /// <returns>Return Image with background information drawn</returns>
-        public static Image<TPixel> DrawBackground<TPixel>(this Image<TPixel> imageFromTemplate, TPixel? backgroundColor = null) where TPixel : struct, IPixel<TPixel>
+        public static Image<TPixel> DrawBackground<TPixel>(this Image<TPixel> imageFromTemplate, TPixel? backgroundColor = null, ImageContentImage<TPixel> backgroundImage = null) where TPixel : struct, IPixel<TPixel>
         {
             if (backgroundColor != null) imageFromTemplate.Mutate(m => m.BackgroundColor((TPixel)backgroundColor));
-            // TO DO : ADD BACKGROUND IMAGE
+            if (backgroundImage != null) imageFromTemplate.Mutate(m => m.DrawImage(backgroundImage.Image, backgroundImage.Opacity));
 
             return imageFromTemplate;
         }

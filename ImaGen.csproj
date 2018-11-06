@@ -35,6 +35,10 @@
     </PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="System.Memory" Version="4.5.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Reference Include="SixLabors.Core">
 	    <HintPath>Dlls\netstandard1.3\SixLabors.Core.dll</HintPath>
 	  </Reference>

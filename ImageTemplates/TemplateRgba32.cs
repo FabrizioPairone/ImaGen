@@ -1,4 +1,5 @@
 ﻿using ImaGen.Extensions;
+using ImaGen.ImageContents;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
@@ -29,7 +30,10 @@ namespace ImaGen.ImageTemplates
         /// </summary>
         public Rgba32? BackgrounColor { get; set; }
 
-        // TO DO : ADD BACKGROUND IMAGE
+        /// <summary>
+        /// Background Image of Image
+        /// </summary>
+        public ImageContentImage<Rgba32> BackgroundImage { get; set; }
 
         // TO DO: ADD DEFAULT FONT 
 
@@ -69,7 +73,7 @@ namespace ImaGen.ImageTemplates
             Image<Rgba32> imgTemplate = new Image<Rgba32>(Width, Height);
 
             // Add Background Info
-            imgTemplate.DrawBackground(backgroundColor: BackgrounColor);
+            imgTemplate.DrawBackground(backgroundColor: BackgrounColor, backgroundImage: BackgroundImage);
 
             // Render Child
             imgTemplate.DrawDefaultImageContent(this);
