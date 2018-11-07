@@ -20,6 +20,11 @@ namespace ImaGen
         /// </summary>
         private ImageTemplate<TPixel> ImageTemplate { get; }
 
+        /// <summary>
+        /// List of Image Contents to draw
+        /// </summary>
+        public List<ImageContent<TPixel>> ListImageContent { get; set; }
+
         #endregion
 
 
@@ -40,21 +45,27 @@ namespace ImaGen
         #region Methods
 
         /// <summary>
-        /// Method that generate the Image based only on ImageTemplate and draw on it the list of image content passed
-        /// </summary>
-        public Image<TPixel> GenerateImage(List<ImageContent> listImageContentToDraw)
-        {
-            Image<TPixel> imageRet = ImageTemplate.GenerateImageFromTemplate();
-            // TO DO : Draw Contents
-            return imageRet;
-        }
-
-        /// <summary>
         /// Method that generate the Image based only on ImageTemplate
         /// </summary>
         public Image<TPixel> GenerateImageTemplate()
         {
             return ImageTemplate.GenerateImageFromTemplate();
+        }
+
+        /// <summary>
+        /// Method that generate the Image based only on ImageTemplate and draw on it the list of image content passed
+        /// </summary>
+        public Image<TPixel> GenerateImageComplete()
+        {
+            // Create adn Draw Template
+            Image<TPixel> imageRet = ImageTemplate.GenerateImageFromTemplate();
+
+            // Draw Content 
+            foreach (ImageContent<TPixel> content in ListImageContent)
+                imageRet = content.RenderContent(imageRet, ImageTemplate);
+
+            // Return Image
+            return imageRet;
         }
 
         #endregion

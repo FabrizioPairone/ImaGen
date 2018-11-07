@@ -3,7 +3,6 @@ using ImaGen.ImageTemplates;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using System.Collections.Generic;
 
 namespace ImaGen.Extensions
 {
@@ -41,10 +40,8 @@ namespace ImaGen.Extensions
         {
             if(imageTemplate.ListDefaultImageContents != null)
             {
-                /* TO DO : DRAW SINGLE CONTENT
-                foreach(ImageContent content in listDefaultImageContent)
-                content.Render(imageTemplate); 
-                */
+                foreach (ImageContent<TPixel> content in imageTemplate.ListDefaultImageContents)
+                    imageFromTemplate = content.RenderContent(imageFromTemplate, imageTemplate);
             }
 
             return imageFromTemplate;

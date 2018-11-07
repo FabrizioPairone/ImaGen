@@ -13,18 +13,30 @@ namespace ImaGen.ImageTemplates
     public abstract class ImageTemplate<TPixel> where TPixel : struct, IPixel<TPixel>
     {
 
+        #region Attributes
+
         /// <summary>
         /// List of Default Image Content present in the Template
         /// </summary>
-        public List<ImageContent> ListDefaultImageContents { get; set; }
+        public List<ImageContent<TPixel>> ListDefaultImageContents { get; set; }
+
+        #endregion
+
+
+        #region Constructor
 
         /// <summary>
         /// Constructor
         /// </summary>
         public ImageTemplate()
         {
-            ListDefaultImageContents = new List<ImageContent>();
+            ListDefaultImageContents = new List<ImageContent<TPixel>>();
         }
+
+        #endregion
+
+
+        #region Methods
 
         /// <summary>
         /// Virtual method that generate the image from the template
@@ -32,8 +44,10 @@ namespace ImaGen.ImageTemplates
         /// <returns></returns>
         public virtual Image<TPixel> GenerateImageFromTemplate()
         {
-            throw new Exception("Override method not implemented yet!");
+            throw new Exception("For the type '" + typeof(TPixel).Name + "' the override method is not implemented yet!");
         }
+
+        #endregion
 
     }
 

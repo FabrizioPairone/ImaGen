@@ -1,5 +1,7 @@
-﻿using SixLabors.ImageSharp;
+﻿using ImaGen.ImageTemplates;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace ImaGen.ImageContents
 {
@@ -7,7 +9,7 @@ namespace ImaGen.ImageContents
     /// <summary>
     /// Rappresent Image object in ImageContent collection
     /// </summary>
-    public class ImageContentImage<TPixel> : ImageContent where TPixel : struct, IPixel<TPixel>
+    public class ImageContentImage<TPixel> : ImageContent<TPixel> where TPixel : struct, IPixel<TPixel>
     {
 
         #region Attributes
@@ -56,6 +58,24 @@ namespace ImaGen.ImageContents
         {
             Opacity = 1;
             Image = SixLabors.ImageSharp.Image.Load<TPixel>(pathImage);
+        }
+
+        #endregion
+
+
+        #region Methods
+
+        /// <summary>
+        /// Draw ImageContent.Image
+        /// </summary>
+        /// <param name="imageToDraw">Image that will be draw</param>
+        /// <param name="imageTemplate">Image Template</param>
+        /// <returns></returns>
+        public override Image<TPixel> RenderContent(Image<TPixel> imageToDraw, ImageTemplate<TPixel> imageTemplate)
+        {
+            // TO DO : MANAGE POSITION AND SIZE !
+            imageToDraw.Mutate(m => m.DrawImage(Image, Opacity));
+            return imageToDraw;
         }
 
         #endregion
