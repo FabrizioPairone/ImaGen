@@ -1,6 +1,5 @@
 ﻿using ImaGen.Extensions;
 using ImaGen.ImageContents;
-using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
@@ -36,16 +35,6 @@ namespace ImaGen.ImageTemplates
         /// </summary>
         public ImageContentImage<Rgba32> BackgroundImage { get; set; }
 
-        /// <summary>
-        /// Default font of text present in the Template
-        /// </summary>
-        public Font DefaultFont { get; set; }
-
-        /// <summary>
-        /// Default color of text present in the Template
-        /// </summary>
-        public Rgba32? DefaultColorText { get; set; }
-
         #endregion
 
 
@@ -65,8 +54,6 @@ namespace ImaGen.ImageTemplates
             Height = height;
             BackgrounColor = Rgba32.White;
             BackgroundImage = null;
-            DefaultFont = SystemFonts.CreateFont("Arial", 10);
-            DefaultColorText = Rgba32.Black;
         }
 
         #endregion

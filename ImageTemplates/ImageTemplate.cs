@@ -1,4 +1,5 @@
 ﻿using ImaGen.ImageContents;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
@@ -16,6 +17,16 @@ namespace ImaGen.ImageTemplates
         #region Attributes
 
         /// <summary>
+        /// Default font of text present in the Template
+        /// </summary>
+        public Font DefaultFont { get; set; }
+
+        /// <summary>
+        /// Default color of text present in the Template
+        /// </summary>
+        public TPixel? DefaultColorText { get; set; }
+
+        /// <summary>
         /// List of Default Image Content present in the Template
         /// </summary>
         public List<ImageContent<TPixel>> ListDefaultImageContents { get; set; }
@@ -30,6 +41,9 @@ namespace ImaGen.ImageTemplates
         /// </summary>
         public ImageTemplate()
         {
+            DefaultFont = SystemFonts.CreateFont("Arial", 10);
+            // TO DO : SET DEFAULT COLOR HERE ! CONVERT COLOR IN TPIXEL [HOW TO DO IT?]
+            DefaultColorText = null;
             ListDefaultImageContents = new List<ImageContent<TPixel>>();
         }
 
