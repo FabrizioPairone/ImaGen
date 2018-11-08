@@ -69,7 +69,7 @@ namespace ImaGen.ImageContents
             if (textColor == null) textColor = imageTemplate.DefaultColorText;
 
             if (fontText != null && TextColor != null)
-                imageToDraw.Mutate(m => m.DrawText(Text, fontText, (TPixel)textColor, new PointF(0, 0)));   // TO DO : ADD ALIGNMENT AND POINT ! [POSITION]
+                imageToDraw.Mutate(m => m.DrawText(Text, fontText, (TPixel)textColor, new PointF(0, 0)));   // TO DO : ADD ALIGNMENT AND POINT ! [POSITION] - BASED ON POINT
 
             return imageToDraw;
         }

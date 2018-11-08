@@ -40,16 +40,19 @@
 
 	<ItemGroup>
 	  <Reference Include="SixLabors.Core">
-	    <HintPath>Dlls\netstandard1.3\SixLabors.Core.dll</HintPath>
+	    <HintPath>..\..\..\source\repos\TestWriteImage\TestWriteImage\Dlls\netstandard2.0\SixLabors.Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="SixLabors.Fonts">
-	    <HintPath>Dlls\netstandard2.0\SixLabors.Fonts.dll</HintPath>
+	    <HintPath>..\..\..\source\repos\TestWriteImage\TestWriteImage\Dlls\netstandard2.0\SixLabors.Fonts.dll</HintPath>
 	  </Reference>
 	  <Reference Include="SixLabors.ImageSharp">
-	    <HintPath>Dlls\netstandard2.0\SixLabors.ImageSharp.dll</HintPath>
+	    <HintPath>..\..\..\source\repos\TestWriteImage\TestWriteImage\Dlls\netstandard2.0\SixLabors.ImageSharp.dll</HintPath>
 	  </Reference>
 	  <Reference Include="SixLabors.ImageSharp.Drawing">
-	    <HintPath>Dlls\netstandard1.3\SixLabors.ImageSharp.Drawing.dll</HintPath>
+	    <HintPath>..\..\..\source\repos\TestWriteImage\TestWriteImage\Dlls\netstandard2.0\SixLabors.ImageSharp.Drawing.dll</HintPath>
+	  </Reference>
+	  <Reference Include="SixLabors.Shapes">
+	    <HintPath>..\..\..\source\repos\TestWriteImage\TestWriteImage\Dlls\netstandard2.0\SixLabors.Shapes.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
    
