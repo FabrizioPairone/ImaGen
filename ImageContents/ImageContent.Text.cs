@@ -1,9 +1,11 @@
 ﻿using ImaGen.ImageTemplates;
+using ImaGen.Styles;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Primitives;
 using SixLabors.ImageSharp.Processing;
+using System;
 
 namespace ImaGen.ImageContents
 {
@@ -32,8 +34,12 @@ namespace ImaGen.ImageContents
         /// </summary>
         public string Text { get; set; }
 
-        
-        // TO DO : ADD POSITION
+        /// <summary>
+        /// Position of Text
+        /// </summary>
+        public Position Position { get; set; }
+
+        // TO DO : ADD PADDING
 
         #endregion
 
@@ -49,6 +55,11 @@ namespace ImaGen.ImageContents
             Text = text;
             TextColor = null;
             Font = null;
+            Position = new PositionAlignment()
+            {
+                HorizontalPosition = HorizontalAlignment.Left,
+                VerticalPosition = VerticalAlignment.Top
+            };
         }
 
         #endregion
@@ -64,16 +75,70 @@ namespace ImaGen.ImageContents
         /// <returns></returns>
         public override Image<TPixel> RenderContent(Image<TPixel> imageToDraw, ImageTemplate<TPixel> imageTemplate)
         {
-            Font fontText = Font;
+            Font textFont = Font;
             TPixel? textColor = TextColor;
-            if (fontText == null) fontText = imageTemplate.DefaultFont;
+            if (textFont == null) textFont = imageTemplate.DefaultFont;
             if (textColor == null) textColor = imageTemplate.DefaultColorText;
 
-            if (fontText != null && TextColor != null)
-                imageToDraw.Mutate(m => m.DrawText(Text, fontText, (TPixel)textColor, new PointF(0, 0)));   // TO DO : ADD ALIGNMENT AND POINT ! [POSITION] - BASED ON POINT
+            if(textFont != null && TextColor != null)
+            {
+                if (Position is PositionAlignment positionAlignment)
+                {
+                    int xPosition = GetXPositionAlignment(imageToDraw.Width, positionAlignment.HorizontalPosition);
+                    int yPosition = GetYPositionAlignment(imageToDraw.Height, positionAlignment.VerticalPosition);
+                    TextGraphicsOptions textGraphicsOptions = new TextGraphicsOptions(true)
+                    {
+                        HorizontalAlignment = positionAlignment.HorizontalPosition,
+                        VerticalAlignment = positionAlignment.VerticalPosition
+                    };
+                    imageToDraw.Mutate(m => m.DrawText(textGraphicsOptions, Text, textFont, (TPixel)textColor, new PointF(xPosition, yPosition)));
+                }
+                else if (Position is PositionCustom positionCustom)
+                {
+                    int xPosition = GetXPositionCustom(imageToDraw.Width, positionCustom.X);
+                    int yPosition = GetYPositionCustom(imageToDraw.Height, positionCustom.Y);
+                    imageToDraw.Mutate(m => m.DrawText(Text, textFont, (TPixel)textColor, new PointF(xPosition, yPosition)));
+                }
+            }
+            
 
             return imageToDraw;
         }
+
+
+        // Private Methods
+        private int GetXPositionAlignment(int widthImage, HorizontalAlignment horizontalPosition)
+        {
+            switch(horizontalPosition)
+            {
+                case HorizontalAlignment.Left: return 0;
+                case HorizontalAlignment.Center: return (widthImage / 2);
+                case HorizontalAlignment.Right: return widthImage;
+            }
+
+            throw new Exception("Horizontal Position not supported!");
+        }
+        private int GetYPositionAlignment(int heightImage, VerticalAlignment verticalPosition)
+        {
+            switch(verticalPosition)
+            {
+                case VerticalAlignment.Top: return 0;
+                case VerticalAlignment.Center: return (heightImage / 2);
+                case VerticalAlignment.Bottom: return heightImage;
+            }
+
+            throw new Exception("Vertical Position not supported!");
+        }
+        private int GetXPositionCustom(int widthImage, int xPosition)
+        {
+            return widthImage < xPosition ? widthImage : xPosition;
+        }
+        private int GetYPositionCustom(int heightImage, int yPosition)
+        {
+            return heightImage < yPosition ? heightImage : yPosition;
+        }
+
+        #endregion
 
     }
 }

@@ -14,12 +14,12 @@ namespace ImaGen.Styles
         /// <summary>
         /// Horizontal alignment of ImageContent
         /// </summary>
-        HorizontalAlignment HorizontalPosition { get; set; }
+        public HorizontalAlignment HorizontalPosition { get; set; }
 
         /// <summary>
         /// Vertical alignment of ImageContent
         /// </summary>
-        VerticalAlignment VerticalPosition { get; set; }
+        public VerticalAlignment VerticalPosition { get; set; }
 
         #endregion
 
