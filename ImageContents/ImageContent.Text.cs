@@ -32,6 +32,7 @@ namespace ImaGen.ImageContents
         /// </summary>
         public string Text { get; set; }
 
+        
         // TO DO : ADD POSITION
 
         #endregion
@@ -73,5 +74,6 @@ namespace ImaGen.ImageContents
 
             return imageToDraw;
         }
+
     }
 }
