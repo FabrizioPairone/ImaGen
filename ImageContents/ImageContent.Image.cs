@@ -124,35 +124,34 @@ namespace ImaGen.ImageContents
             int heightResize = image.Height;
 
             // Check if need resize and calculate width and height or resize.
-            if (Scaled)
+            if (Scaled || ResizeMethod == ResizeMethod.Scaled)
             {
                 widthResize = targetWidth;
                 heightResize = targetHeight;
                 needResize = true;
             }
-            else if (image.Width > targetWidth || image.Height > targetHeight)
+            else if (ResizeMethod == ResizeMethod.ScaledWithProportions || (ResizeMethod == ResizeMethod.KeepProportions && (widthResize > targetWidth || heightResize > targetHeight)))
             {
-                needResize = true;
+                // Proportion Image based on X
+                double ratio = targetWidth / widthResize;
+                double dWidthResize = widthResize * ratio;
+                double dHeightResize = heightResize * ratio;
 
-                switch (ResizeMethod)
+                if (dHeightResize > targetHeight)
                 {
-                    case ResizeMethod.KeepProportions:
-
-                        // TO DO : CALCULATE X, Y PROPORTION
-
-                        break;
-                    case ResizeMethod.Scaled:
-                        widthResize = (image.Width < targetWidth ? image.Width : targetWidth);
-                        heightResize = (image.Height < targetHeight ? image.Height : targetHeight);
-                        break;
-                    default: throw new Exception("The Enum of ResizeMethod '" + ResizeMethod.ToString() + "' not implemented in ImageContent.Image.cs.GetImageToRender(); yet!");
+                    ratio = targetHeight / heightResize;
+                    dWidthResize = dWidthResize * ratio;
+                    dHeightResize = dHeightResize * ratio;
                 }
-            }
 
+                // Round to integer the proportions
+                widthResize = (int)Math.Ceiling(dWidthResize);
+                heightResize = (int)Math.Ceiling(dHeightResize);
+                needResize = true;
+            }
 
             // If need to resize the image, I resize the image.
             if (needResize) image.Mutate(m => m.Resize(widthResize, heightResize));
-
 
             // Return Correct Image to Draw
             return image;

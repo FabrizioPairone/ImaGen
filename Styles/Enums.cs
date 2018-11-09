@@ -15,7 +15,12 @@
         /// <summary>
         /// Scaled the image to targetSize.
         /// </summary>
-        Scaled
+        Scaled,
+
+        /// <summary>
+        /// Scaled the image to max targetSize keeping proportions
+        /// </summary>
+        ScaledWithProportions
 
     }
 }
