@@ -1,7 +1,10 @@
 ﻿using ImaGen.ImageTemplates;
+using ImaGen.Styles;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
+using System;
 
 namespace ImaGen.ImageContents
 {
@@ -14,29 +17,28 @@ namespace ImaGen.ImageContents
 
         #region Attributes
 
-        // Private Attrivute for opacity
-        private float _opacity { get; set; }
-
-
         /// <summary>
         /// The Image of TPixel Type
         /// </summary>
         public Image<TPixel> Image { get; }
 
         /// <summary>
-        /// Opacity of Image. Value must be between 0 and 1
+        /// Padding Space of Image
         /// </summary>
-        public float Opacity
-        {
-            get { return _opacity; }
-            set { _opacity = (value < 0 ? 0 : value > 1 ? 1 : value); }
-        }
+        public Padding Padding { get; set; }
 
-        // TO DO : ADD POSITION !
+        /// <summary>
+        /// Location of Image. Default is x = 0, y = 0
+        /// </summary>
+        public Point Location { get; set; }
 
-        // TO DO : ADD SIZE !
+        /// <summary>
+        /// Graphics Options of Image
+        /// </summary>
+        public GraphicsOptions GraphicsOptions { get; set; }
 
         #endregion
+
 
         #region Constructors
 
@@ -46,8 +48,10 @@ namespace ImaGen.ImageContents
         /// <param name="image">Image to Add</param>
         public ImageContentImage(Image<TPixel> image)
         {
-            Opacity = 1;
             Image = image;
+            Padding = new Padding() { All = 0 };
+            Location = new Point(0, 0);
+            GraphicsOptions = new GraphicsOptions();
         }
 
         /// <summary>
@@ -56,8 +60,10 @@ namespace ImaGen.ImageContents
         /// <param name="pathImage">path of the image to add</param>
         public ImageContentImage(string pathImage)
         {
-            Opacity = 1;
             Image = SixLabors.ImageSharp.Image.Load<TPixel>(pathImage);
+            Padding = new Padding() { All = 0 };
+            Location = new Point(0, 0);
+            GraphicsOptions = new GraphicsOptions();
         }
 
         #endregion
@@ -73,9 +79,15 @@ namespace ImaGen.ImageContents
         /// <returns></returns>
         public override Image<TPixel> RenderContent(Image<TPixel> imageToDraw, ImageTemplate<TPixel> imageTemplate)
         {
-            // TO DO : MANAGE POSITION AND SIZE !
-            imageToDraw.Mutate(m => m.DrawImage(Image, Opacity));
-            return imageToDraw;
+            // Params Draw Image:
+            // 1) ImageToDraw - Control if the image is not so big for the targetSize (targetWidth, targetHeight) [Size - Padding]
+            // 2) Location - Default is 0, 0 of target size. If is set control that it's ok the position (If the Image can be contained)
+            // 3) Graphics Options - Are ok, user can set it.
+
+            // OLD WAY 
+            // imageToDraw.Mutate(m => m.DrawImage(Image, Opacity));
+            // return imageToDraw;
+            throw new Exception("Render Content of ImageContent.Image not implemented yet.");
         }
 
         #endregion
