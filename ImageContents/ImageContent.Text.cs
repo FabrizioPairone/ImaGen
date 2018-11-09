@@ -39,7 +39,15 @@ namespace ImaGen.ImageContents
         /// </summary>
         public Position Position { get; set; }
 
-        // TO DO : ADD PADDING
+        /// <summary>
+        /// Padding of Text
+        /// </summary>
+        public Padding Padding { get; set; }
+
+        /// <summary>
+        /// Set if Font will be scaled or not
+        /// </summary>
+        public bool ScaledFont { get; set; }
 
         #endregion
 
@@ -60,6 +68,8 @@ namespace ImaGen.ImageContents
                 HorizontalPosition = HorizontalAlignment.Left,
                 VerticalPosition = VerticalAlignment.Top
             };
+            Padding = new Padding();
+            ScaledFont = false;
         }
 
         #endregion
@@ -75,67 +85,141 @@ namespace ImaGen.ImageContents
         /// <returns></returns>
         public override Image<TPixel> RenderContent(Image<TPixel> imageToDraw, ImageTemplate<TPixel> imageTemplate)
         {
+            // Execute Control
+            if ((imageToDraw.Width - Padding.Left - Padding.Right) <= 0) throw new Exception("Padding set it's biggest than width of image!");
+            if ((imageToDraw.Height - Padding.Top - Padding.Bottom) <= 0) throw new Exception("Padding set it's biggest than height of image!");
+
+            // Get Base Information
             Font textFont = Font;
             TPixel? textColor = TextColor;
             if (textFont == null) textFont = imageTemplate.DefaultFont;
             if (textColor == null) textColor = imageTemplate.DefaultColorText;
 
-            if(textFont != null && TextColor != null)
-            {
-                if (Position is PositionAlignment positionAlignment)
-                {
-                    int xPosition = GetXPositionAlignment(imageToDraw.Width, positionAlignment.HorizontalPosition);
-                    int yPosition = GetYPositionAlignment(imageToDraw.Height, positionAlignment.VerticalPosition);
-                    TextGraphicsOptions textGraphicsOptions = new TextGraphicsOptions(true)
-                    {
-                        HorizontalAlignment = positionAlignment.HorizontalPosition,
-                        VerticalAlignment = positionAlignment.VerticalPosition
-                    };
-                    imageToDraw.Mutate(m => m.DrawText(textGraphicsOptions, Text, textFont, (TPixel)textColor, new PointF(xPosition, yPosition)));
-                }
-                else if (Position is PositionCustom positionCustom)
-                {
-                    int xPosition = GetXPositionCustom(imageToDraw.Width, positionCustom.X);
-                    int yPosition = GetYPositionCustom(imageToDraw.Height, positionCustom.Y);
-                    imageToDraw.Mutate(m => m.DrawText(Text, textFont, (TPixel)textColor, new PointF(xPosition, yPosition)));
-                }
-            }
-            
+            // Calculate Offsets and x, y value of image.
+            int xOffset = GetXOffset();
+            int yOffset = GetYOffset();
+            int xStartDraw = GetXStartDraw(imageToDraw.Width);
+            int yStartDraw = GetYStartDraw(imageToDraw.Height);
+            int targetWidth = imageToDraw.Width - xStartDraw - Padding.Right;
+            int targetHeight = imageToDraw.Height - yStartDraw - Padding.Top;
 
+            // Wrap Font
+            textFont = WrapFont(textFont, targetWidth, targetHeight);
+
+            // Draw Text
+            TextGraphicsOptions textGraphicsOptions = new TextGraphicsOptions(true)
+            {
+                HorizontalAlignment = GetHorizontalTextAlignment(),
+                VerticalAlignment = GetVerticalTextAlignment(),
+                WrapTextWidth = targetWidth
+            };
+
+            imageToDraw.Mutate(m => m.DrawText(textGraphicsOptions, Text, textFont, (TPixel)textColor, new PointF(xStartDraw, yStartDraw)));
+
+
+            // Return Image
             return imageToDraw;
         }
 
-
         // Private Methods
-        private int GetXPositionAlignment(int widthImage, HorizontalAlignment horizontalPosition)
+        private int GetXOffset()
         {
-            switch(horizontalPosition)
+            if (Position is PositionCustom positionCustom) return positionCustom.X;
+            return 0;
+        }
+        private int GetYOffset()
+        {
+            if (Position is PositionCustom positionCustom) return positionCustom.Y;
+            return 0;
+        }
+        private int GetXStartDraw(int imageWidth)
+        {
+            if (Position is PositionAlignment positionAlignment)
             {
-                case HorizontalAlignment.Left: return 0;
-                case HorizontalAlignment.Center: return (widthImage / 2);
-                case HorizontalAlignment.Right: return widthImage;
+                switch (positionAlignment.HorizontalPosition)
+                {
+                    case HorizontalAlignment.Left: return Padding.Left;
+                    case HorizontalAlignment.Center: return ((imageWidth - Padding.Left - Padding.Right) / 2) + Padding.Left;
+                    case HorizontalAlignment.Right: return imageWidth - Padding.Right;
+                }
+
+                throw new Exception("Horizontal Position not supported!");
             }
 
-            throw new Exception("Horizontal Position not supported!");
+            if (Position is PositionCustom positionCustom) return positionCustom.X + Padding.Left;
+
+            throw new Exception("Position object '" + Position.GetType().Name + "' not implemented in ImageContent.Text.cs.GetXStartDraw();");
         }
-        private int GetYPositionAlignment(int heightImage, VerticalAlignment verticalPosition)
+        private int GetYStartDraw(int imageHeight)
         {
-            switch(verticalPosition)
+            if (Position is PositionAlignment positionAlignment)
             {
-                case VerticalAlignment.Top: return 0;
-                case VerticalAlignment.Center: return (heightImage / 2);
-                case VerticalAlignment.Bottom: return heightImage;
+                switch (positionAlignment.VerticalPosition)
+                {
+                    case VerticalAlignment.Top: return Padding.Top;
+                    case VerticalAlignment.Center: return ((imageHeight - Padding.Top - Padding.Bottom) / 2) + Padding.Top;
+                    case VerticalAlignment.Bottom: return imageHeight - Padding.Bottom;
+                }
+
+                throw new Exception("Vertical Position not supported!");
             }
 
-            throw new Exception("Vertical Position not supported!");
+            if (Position is PositionCustom positionCustom) return positionCustom.Y + Padding.Top;
+
+            throw new Exception("Position object '" + Position.GetType().Name + "' not implemented in ImageContent.Text.cs.GetYStartDraw();");
         }
-        private int GetXPositionCustom(int widthImage, int xPosition)
+
+        private HorizontalAlignment GetHorizontalTextAlignment()
         {
-            return widthImage < xPosition ? widthImage : xPosition;
+            if (Position is PositionAlignment positionAlignment) return positionAlignment.HorizontalPosition;
+            if (Position is PositionCustom positionCustom) return positionCustom.HorizontalTextAlignment;
+
+            throw new Exception("Position object '" + Position.GetType().Name + "' not implemented in ImageContent.Text.cs.GetHorizontalTextAlignment();");
         }
-        private int GetYPositionCustom(int heightImage, int yPosition)
+        private VerticalAlignment GetVerticalTextAlignment()
         {
-            return heightImage < yPosition ? heightImage : yPosition;
+            if (Position is PositionAlignment positionAlignment) return positionAlignment.VerticalPosition;
+            if (Position is PositionCustom positionCustom) return positionCustom.VerticalTextAlignment;
+
+            throw new Exception("Position object '" + Position.GetType().Name + "' not implemented in ImageContent.Text.cs.GetVerticalTextAlignment();");
+        }
+
+        private Font WrapFont(Font font, int targetWidth, int targetHeight)
+        {
+            SizeF s = new SizeF(float.MaxValue, float.MaxValue);
+            float scaleFactor = (font.Size / 2); // everytime we change direction we half this size
+            int trapCount = (int)font.Size * 2;
+            if (trapCount < 10) trapCount = 10;
+            bool isTooSmall = false;
+
+            while ((s.Height != targetHeight) && trapCount > 0)
+            {
+                // If i decide to scaled font i will scale it
+                if (ScaledFont)
+                {
+                    if (s.Height > targetHeight)
+                    {
+                        if (isTooSmall) scaleFactor = scaleFactor / 2;
+                        font = new Font(font, font.Size - scaleFactor);
+                        isTooSmall = false;
+                    }
+
+                    if (s.Height < targetHeight)
+                    {
+                        if (!isTooSmall) scaleFactor = scaleFactor / 2;
+                        font = new Font(font, font.Size + scaleFactor);
+                        isTooSmall = true;
+                    }
+                }
+
+                // Measure Text
+                s = TextMeasurer.Measure(Text, new RendererOptions(font) { WrappingWidth = targetWidth });
+
+                trapCount--;                
+            }
+
+            // Return Font Wrapped
+            return font;
         }
 
         #endregion

@@ -1,4 +1,6 @@
-﻿namespace ImaGen.Styles
+﻿using SixLabors.Fonts;
+
+namespace ImaGen.Styles
 {
 
     /// <summary>
@@ -19,6 +21,16 @@
         /// </summary>
         public int Y { get; set; }
 
+        /// <summary>
+        /// Horizontal Text Alignment
+        /// </summary>
+        public HorizontalAlignment HorizontalTextAlignment { get; set; }
+
+        /// <summary>
+        /// Vertical Text Alignment
+        /// </summary>
+        public VerticalAlignment VerticalTextAlignment { get; set; }
+
         #endregion
 
 
@@ -31,6 +43,8 @@
         {
             X = 0;
             Y = 0;
+            HorizontalTextAlignment = HorizontalAlignment.Left;
+            VerticalTextAlignment = VerticalAlignment.Top;
         }
 
         #endregion
