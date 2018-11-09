@@ -85,23 +85,23 @@ namespace ImaGen.ImageContents
         /// <returns></returns>
         public override Image<TPixel> RenderContent(Image<TPixel> imageToDraw, ImageTemplate<TPixel> imageTemplate)
         {
-            // Execute Control
-            if ((imageToDraw.Width - Padding.Left - Padding.Right) <= 0) throw new Exception("Padding set it's biggest than width of image!");
-            if ((imageToDraw.Height - Padding.Top - Padding.Bottom) <= 0) throw new Exception("Padding set it's biggest than height of image!");
-
-            // Get Base Information
+            // Calculate Offsets and x, y value of image and get base information
             Font textFont = Font;
             TPixel? textColor = TextColor;
-            if (textFont == null) textFont = imageTemplate.DefaultFont;
-            if (textColor == null) textColor = imageTemplate.DefaultColorText;
-
-            // Calculate Offsets and x, y value of image.
             int xOffset = GetXOffset();
             int yOffset = GetYOffset();
             int xStartDraw = GetXStartDraw(imageToDraw.Width);
             int yStartDraw = GetYStartDraw(imageToDraw.Height);
             int targetWidth = imageToDraw.Width - xStartDraw - Padding.Right;
-            int targetHeight = imageToDraw.Height - yStartDraw - Padding.Top;
+            int targetHeight = imageToDraw.Height - yStartDraw - Padding.Bottom;
+            if (textFont == null) textFont = imageTemplate.DefaultFont;
+            if (textColor == null) textColor = imageTemplate.DefaultColorText;
+
+            // Execute Control
+            if ((imageToDraw.Width - Padding.Left - Padding.Right) <= 0) throw new Exception("Padding set it's biggest than width of image!");
+            if ((imageToDraw.Height - Padding.Top - Padding.Bottom) <= 0) throw new Exception("Padding set it's biggest than height of image!");
+            if (targetWidth > 0) throw new Exception("The target width it's biggest than width of image!");
+            if (targetHeight > 0) throw new Exception("The target height it's biggest than height of image!");
 
             // Wrap Font
             textFont = WrapFont(textFont, targetWidth, targetHeight);
